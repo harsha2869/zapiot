@@ -1,6 +1,7 @@
 package com.harsha.zapiottest;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -21,40 +22,67 @@ public class ZapService {
 		return personRepo.save(p);
 	}
 
-	public Person editPerson(Person p) {
-		personRepo.deleteById(p.getId());
-		return personRepo.save(p);
+	public Optional<Person> editPerson(Person p) {
+		Optional<Person> savedRecord = personRepo.findById(p.getId());
+		if(savedRecord.isPresent()) {
+			if(null != savedRecord.get().getAddress() 
+					&& !savedRecord.get().getAddress().isEmpty()) {
+				addRepo.deleteAll(savedRecord.get().getAddress());
+			}
+			personRepo.delete(savedRecord.get());
+			personRepo.save(p);
+			return personRepo.findById(p.getId());
+		} else {
+			return Optional.empty();
+		}
 	}
 
 	public String deletePerson(Long id) {
 		String message = "";
 		try {
 			personRepo.deleteById(id);
-			message = "Deleted successfully.";
+			message = "Person record removed successfully.";
 		} catch(EmptyResultDataAccessException ex) {
-			message = "Record not available for id " + id;
+			message = "Person record not available for id " + id;
 		} catch(Exception e) {
 			message = "Delete failure.";
 		}
 		return message;
 	}
 
-	public List<Address> addAddress(List<Address> a) {
-		return StreamSupport.stream(addRepo.saveAll(a).spliterator(), false).collect(Collectors.toList());
+	public Optional<Person> addAddress(Person p) {
+		Optional<Person> savedRecord = personRepo.findById(p.getId());
+		if(savedRecord.isPresent()) {
+			personRepo.save(p);
+			return personRepo.findById(p.getId());
+		} else {
+			return Optional.empty();
+		}
 	}
 
-	public Address editAddress(Address a) {
-		addRepo.deleteById(a.getAddrId());
-		return addRepo.save(a);
+	public Optional<Person> editAddress(Person p) {
+		
+		Optional<Person> savedRecord = personRepo.findById(p.getId());
+		if(savedRecord.isPresent()) {
+			if(null != savedRecord.get().getAddress() 
+					&& !savedRecord.get().getAddress().isEmpty()) {
+				addRepo.deleteAll(savedRecord.get().getAddress());
+			}
+			personRepo.delete(savedRecord.get());
+			personRepo.save(p);
+			return personRepo.findById(p.getId());
+		} else {
+			return Optional.empty();
+		}		
 	}
 
 	public String deleteAddress(Long id) {
 		String message = "";
 		try {
 			addRepo.deleteById(id);
-			message = "Deleted successfully.";
+			message = "Address record removed successfully.";
 		} catch (EmptyResultDataAccessException ex) {
-			message = "Record not available for id " + id;
+			message = "Address record not available for id " + id;
 		} catch (Exception e) {
 			message = "Delete failure.";
 		}

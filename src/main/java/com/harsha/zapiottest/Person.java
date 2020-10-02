@@ -1,6 +1,8 @@
 package com.harsha.zapiottest;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Person {
+public class Person implements Serializable, Cloneable {
 	
 	@Id
 	@Column(unique = true)
@@ -21,7 +23,7 @@ public class Person {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID", nullable = false)
-	private List<Address> address;
+	private Set<Address> address;
 	
 	public Long getId() {
 		return id;
@@ -42,11 +44,24 @@ public class Person {
 		this.lastname = lastname;
 	}
 	
-	public List<Address> getAddress() {
+	public Set<Address> getAddress() {
 		return address;
 	}
-	public void setAddress(List<Address> address) {
+	public void setAddress(Set<Address> address) {
 		this.address = address;
+	}
+	
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(null == obj || this.getClass() != obj.getClass()) return false;
+		Person person = (Person) obj;
+		return this.id == person.id;
 	}
 	
 }

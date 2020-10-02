@@ -1,12 +1,12 @@
 package com.harsha.zapiottest;
 
-import java.util.List;
+import java.util.Set;
 
 public class ZapResponse {
 	
 	private String message;
 	private Person person;
-	private List<Address> addresses;
+	private Set<Address> addresses;
 	
 	public String getMessage() {
 		return message;
@@ -20,10 +20,10 @@ public class ZapResponse {
 	public void setPerson(Person person) {
 		this.person = person;
 	}
-	public List<Address> getAddresses() {
+	public Set<Address> getAddresses() {
 		return addresses;
 	}
-	public void setAddresses(List<Address> addresses) {
+	public void setAddresses(Set<Address> addresses) {
 		this.addresses = addresses;
 	}
 	

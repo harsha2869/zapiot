@@ -1,5 +1,7 @@
 package com.harsha.zapiottest;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Address {
+public class Address implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -47,6 +49,22 @@ public class Address {
 	}
 	public void setPostalcode(String postalcode) {
 		this.postalcode = postalcode;
+	}
+	
+	@Override
+	public int hashCode() {
+		return street.hashCode() + city.hashCode() + state.hashCode() + postalcode.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(null == obj || this.getClass() != obj.getClass()) return false;
+		Address address = (Address) obj;
+		return this.street != null && this.street.equals(address.street) 
+				&& this.city != null && this.city.equals(address.city)
+				&& this.state != null && this.state.equals(address.state)
+				&& this.postalcode != null && this.postalcode.equals(address.postalcode);
 	}
 	
 }

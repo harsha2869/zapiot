@@ -1,9 +1,7 @@
 package com.harsha.zapiottest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,12 +38,13 @@ public class ZapController {
 	@PostMapping("/editPerson")
 	public ResponseEntity<ZapResponse> editPerson(@RequestBody ZapRequest request) {
 		ZapResponse zap = new ZapResponse();
-		Person p = service.editPerson(request.getPerson());
-		if(null != p) {
-			zap.setPerson(p);
+		Optional<Person> p = service.editPerson(request.getPerson());
+		if(p.isPresent()) {
+			zap.setPerson(p.get());
 			zap.setMessage("Person updated successfully");
 			return new ResponseEntity<ZapResponse>(zap, HttpStatus.OK); 
 		} else {
+			zap.setMessage("Person record not found");
 			return new ResponseEntity<ZapResponse>(zap, HttpStatus.BAD_REQUEST); 
 		}
 		
@@ -62,13 +61,14 @@ public class ZapController {
 	@PostMapping("/addAddress")
 	public ResponseEntity<ZapResponse> addAddress(@RequestBody ZapRequest request) {
 		ZapResponse zap = new ZapResponse();
-		List<Address> addresses = service.addAddress(request.getPerson().getAddress());
+		Optional<Person> person = service.addAddress(request.getPerson());
 
-		if (null != addresses && !addresses.isEmpty()) {
-			zap.setAddresses(addresses);
+		if (person.isPresent()) {
+			zap.setPerson(person.get());
 			zap.setMessage("Address added to person successfully");
 			return new ResponseEntity<ZapResponse>(zap, HttpStatus.OK);
 		} else {
+			zap.setMessage("Person record not found");
 			return new ResponseEntity<ZapResponse>(zap, HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -77,23 +77,24 @@ public class ZapController {
 	public ResponseEntity<ZapResponse> editAddress(@RequestBody ZapRequest request) {
 
 		ZapResponse zap = new ZapResponse();
-		Address a = service.editAddress(request.getPerson().getAddress().get(0));
+		Optional<Person> person = service.editAddress(request.getPerson());
 
-		if (null != a) {
-			zap.setAddresses(Arrays.asList(a));
+		if (person.isPresent()) {
+			zap.setPerson(person.get());
 			zap.setMessage("Address updated successfully");
 			return new ResponseEntity<ZapResponse>(zap, HttpStatus.OK);
 		} else {
+			zap.setMessage("Person record not found");
 			return new ResponseEntity<ZapResponse>(zap, HttpStatus.BAD_REQUEST);
 		}
 
 	}
 
 	@GetMapping("/deleteAddress/{id}")
-	public ResponseEntity<Address> deleteAddress(@RequestBody Long id) {
+	public ResponseEntity<String> deleteAddress(@PathVariable Long id) {
 
-		service.deleteAddress(id);
-		return new ResponseEntity<Address>(HttpStatus.OK);
+		String message = service.deleteAddress(id);
+		return new ResponseEntity<String>(message, HttpStatus.OK);
 	}
 	 
 
