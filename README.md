@@ -12,6 +12,6 @@
 **** Guide to check Database UI *************
 http://localhost:8080/h2-console
 
-1. Connect (Password will remain empty)
+1. Connect (Password will remain empty ; make sure JDBC url value is - jdbc:h2:mem:person
 2. Add person request must be executed first to verify records.
 3. Refer to Swagger UI for more details on requests.
